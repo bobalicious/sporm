@@ -6,25 +6,30 @@ class MySqlQueryer {
 	private $sDatabase;
 	private $sDatabaseLocation;
 	
-	private $iQueriesRan = 0;
-	
 	/**
 	 * @var MySqlCommandGenerator
 	 */
 	private $oCommandGenerator;
+
+	/**
+	* @var MySqlConnector
+	*/
+	private $oConnector;
 	
-	function __construct( $aConfig ) {
+	function __construct( $aConfig, $oCommandGenerator, $oConnector ) {
 		
 		$this->sUsername         = $aConfig['Username'];
 		$this->sPassword         = $aConfig['Password'];
 		$this->sDatabase         = $aConfig['Database'];
 		$this->sDatabaseLocation = $aConfig['Location'];		
 		
-		$this->oCommandGenerator = new MySqlCommandGenerator();
+		$this->oCommandGenerator = $oCommandGenerator;
+		$this->oConnector        = $oConnector;
+		$this->connect();
 	}
 	
 	private function connect() {
-		$this->oDb = mysqli_connect( $this->sDatabaseLocation, $this->sUsername, $this->sPassword, $this->sDatabase );
+		$this->oConnector->connect( $this->sDatabaseLocation, $this->sUsername, $this->sPassword, $this->sDatabase );
 	}
 	
 	function getNumberOfQueriesRan() {
@@ -37,64 +42,11 @@ class MySqlQueryer {
 		$aColumnList    = $oMapping->getColumns();
 		$aBindVariables = $oFilter->getFullVariableListWithoutNulls();
 
-		$this->connect();
-		$rStatement = $this->oDb->prepare( $sQuery );
-
 		$sBindVars = implode( ',', $aBindVariables );
-//		echo( "$sQuery: $sBindVars</br>");
 
-		if ( !$rStatement ) {
-			throw( new Exception( 'Error resolving ORM configuration for Select of ' . $oMapping->getObjectType() ) );	
-		}
-		
-		$this->bindVariables( $aBindVariables, $rStatement );
-		$rStatement->execute();
-
-		$aFullResults = array();
-		$aResultRow   = array();
-		$this->bindResults( $aColumnList, $rStatement, $aResultRow );
-		
-		while( $rStatement->fetch() ) {
-			$aFullResults[] = $this->cloneArray( $aResultRow );
-		}
-		
-		$rStatement->close();
-
-		$this->iQueriesRan++;
-		
-		return $aFullResults;
+		return $this->oConnector->runQuery($sQuery, $aBindVariables);
 	}
 	
-	private function cloneArray( $aArray ) {
-		
-		$aNewArray = array();
-		foreach ( $aArray as $sKey => $sValue ) {
-			$aNewArray[$sKey] = $sValue;
-		}
-		return $aNewArray;
-	}
-
-	
-	function executeStatement( $sStatement, $aBindVariables, $sAction ) {
-		
-		$this->connect();
-		$rStatement = $this->oDb->prepare( $sStatement );
-
-		if ( !$rStatement ) {
-			throw( new Exception( 'Error resolving ORM configuration for ' . $sAction ) );	
-		}
-		
-		$this->bindVariables( $aBindVariables, $rStatement );
-
-		$bSuccess = $rStatement->execute();
-
-		// TODO: error handling
-		$rStatement->close();
-	
-		return $bSuccess;
-	
-	}
-
 	private function getNumberOfRowsInResultSet( $rResult ) {
 		return count( $rResult );
 	}
@@ -108,7 +60,6 @@ class MySqlQueryer {
 		
 		$aData = array();
 
-		$this->connect();
 		$rResult = $this->runQuery( $oMapping, $oFilter, $oOrderBy, $oLimit );
 
 		if ( $rResult ) {
@@ -145,7 +96,8 @@ class MySqlQueryer {
 		$sBindVariableList  = implode( $aBindVariableNames, ", " );
 		
 		$sInsert = "INSERT INTO $sBaseTable ( $sColumnList ) VALUES ( $sBindVariableList );";
-		$this->executeStatement( $sInsert, $aRawData, 'update of ' . get_class( $oObject ) );		
+		
+		$this->oConnector->executeStatement( $sInsert, $aRawData, 'update of ' . get_class( $oObject ) );		
 		
 	}	
 	
@@ -158,7 +110,7 @@ class MySqlQueryer {
 		
 		$sDelete     = "DELETE FROM $sBaseTable WHERE $iIdLookup;";
 		
-		$this->executeStatement( $sDelete, $aRawData, 'delete of ' . get_class( $oObject ) );		
+		$this->oConnector->executeStatement( $sDelete, $aRawData, 'delete of ' . get_class( $oObject ) );		
 		
 	}	
 	
@@ -180,40 +132,10 @@ class MySqlQueryer {
 		
 		// TODO: don't update the ID field...
 		$sUpdate = "UPDATE $sBaseTable SET $sColumnList WHERE $iIdLookup;";
-		$this->executeStatement( $sUpdate, $aRawData, 'update of ' . get_class( $oObject ) );		
+		
+		$this->oConnector->executeStatement( $sUpdate, $aRawData, 'update of ' . get_class( $oObject ) );		
 		
 	}
 	
-	function bindVariables( $aBindVariableList, $rStatement ) {
-
-		if ( count( $aBindVariableList ) > 0 ) {
-		
-			$aBindVariableCallStringElements = array();
-			$aBindVariableTypes              = array();
-			
-			foreach( $aBindVariableList as $sBindVariableDataKey => $sBindVariableDataElement ) {
-				$aBindVariableCallStringElements[] = '$aBindVariableList["'.$sBindVariableDataKey.'"]';
-				$aBindVariableTypes[] = 's';
-			}
-			$sBindVariableCallString = implode( $aBindVariableCallStringElements, ", " );
-			$sBindVariableTypes      = implode( $aBindVariableTypes );
-			
-			$sBindCommand = '$rStatement->bind_param( $sBindVariableTypes, '.$sBindVariableCallString.' );';
-			eval( $sBindCommand ); // TODO: only handles strings.
-		}
-	}
-	
-	function bindResults( $aResultColumnList, $rStatement, &$aResultsRow ) {
-
-		if ( count( $aResultColumnList ) > 0 ) {
-			
-			foreach( $aResultColumnList as $sColumnName ) {
-				$aBindResultVariable[] = '$aResultsRow[\''.$sColumnName.'\']';
-			}
-			$sBindVariableCallString = implode( $aBindResultVariable, ", " );
-			$sBindCommand = '$rStatement->bind_result( '.$sBindVariableCallString.' );';
-			eval( $sBindCommand );
-		}
-	}
 }
 ?>

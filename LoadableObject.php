@@ -25,6 +25,7 @@ class LoadableObject {
 		$this->sId = $sId;
 	}
 	
+	// replace with CLASS_NAME
 	function getObjectType() {
 		return get_class( $this );
 	}

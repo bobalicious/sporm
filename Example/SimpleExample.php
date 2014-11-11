@@ -1,32 +1,10 @@
 <?php
 
-// This is how I'd LIKE to use it, not how it can be used now...
-
-$oDatabaseConfiguration = DatabaseReader::registerConfiguration( [ DatabaseType: DatabaseConfiguration::MY_SQL
-																 , Username    : 'DatabaseUsername'
-																 , Password    : 'DatabasePassword'             ] );
-$oDatabaseReader = DatabaseReader::getInstance();
-
-$oGotById = $oDatabaseReader->getById( 123, SimpleClassToBeStored::OBJECT_TYPE );
-
-$oGotByFiltering = $oDatabaseReader->getData( Filter::attribute('some_data')->isEqualTo('value'), SimpleClassToBeStored::OBJECT_TYPE );
-
-$oGotByComplexFiltering = $oDatabaseReader->getData(
-							Filter::attribute('some_data')->isEqualTo('value')
-								->andAttribute('some_other_data')->isNotNull()
-								->andAttribute('some_other_data')->isNotEqualTo('badValue')
-							, SimpleClassToBeStored::OBJECT_TYPE );
-
-// Writing data back
-
-$oGotById->setSomeData('changed');
-$oDatabaseReader->writeData( $oGotById );
-
+require_once( '../IncludeDatabaseConnection.php' );
 
 class SimpleClassToBeStored extends LoadableObject {
 
-	public const OBJECT_TYPE = __CLASS__;
-	private $sId;
+	const OBJECT_TYPE = __CLASS__;
 	private $sSomeData;
 	private $sSomeOtherData;
 	
@@ -39,16 +17,20 @@ class SimpleClassToBeStored extends LoadableObject {
 		$this->setIsValid( true );
 	}
 	
-	function getId() {
-		return $this->sId;
-	}
-	
 	function getSomeData() {
 		return $this->sSomeData;
 	}
 	
+	function setSomeData( $sData ) {
+		$this->sSomeData = $sData;
+	}
+	
 	function getSomeOtherData() {
 		return $this->sSomeOtherData;
+	}
+	
+	function setSomeOtherData( $sData ) {
+		$this->sSomeOtherData = $sData;
 	}
 }
 
@@ -85,10 +67,47 @@ class SimpleClassToBeStoredOrmConfiguration extends OrmConfiguration {
 		return $oObject;
 	}
 	
-	function buildInvalidObject( $sId ) {
+	function buildInvalidObject(  $sId = false  ) {
 		
 		return new SimpleClassToBeStored( false
 										, null
 						  		   		, null );
 	}
 }
+
+
+
+
+// This is how I'd LIKE to use it, not how it can be used now...
+
+$aConfiguration = array( 'DatabaseType' => DatabaseConfiguration::MY_SQL
+						, 'Username'     => 'Username'
+						, 'Password'     => 'Password'
+						, 'Database'     => 'Database'
+						, 'Location'     => 'Location'
+						);
+
+$oDatabaseConfiguration = DatabaseReader::registerConfiguration( $aConfiguration );
+
+$oOrmRegister = new OrmRegister();
+$oOrmRegister->registerOrmConfigration( SimpleClassToBeStored::OBJECT_TYPE, new SimpleClassToBeStoredOrmConfiguration() );
+
+$oDatabaseReader = DatabaseReader::getInstance( $oOrmRegister );
+
+$oGotById = $oDatabaseReader->getById( 123, SimpleClassToBeStored::OBJECT_TYPE );
+
+$oGotByFiltering = $oDatabaseReader->getData( Filter::attribute('some_data')->isEqualTo('value'), SimpleClassToBeStored::OBJECT_TYPE );
+
+$oGotByComplexFiltering = $oDatabaseReader->getData(
+													Filter::attribute('some_data')->isEqualTo('value')
+														->andAttribute('some_other_data')->isNotNull()
+														->andAttribute('some_other_data')->isNotEqualTo('badValue')
+													, SimpleClassToBeStored::OBJECT_TYPE );
+
+// Writing data back
+
+$oGotById->setSomeData('changed');
+$oDatabaseReader->writeData( $oGotById );
+
+
+

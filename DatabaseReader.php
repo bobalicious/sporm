@@ -20,28 +20,32 @@ class DatabaseReader {
 	private $oCache;
 	
 	static private $oInstance;
+	static private $aRegisteredConfiguration;
 	
-	private function __construct() {
-		// TODO: could be driven by config...
-		$this->oQueryer 	= new MySqlQueryer();
-		$this->oOrmRegister = new OrmRegister();
+	private function __construct( $oOrmRegister ) {
+		$this->oQueryer 	= DatabaseFactory::buildDatabaseQueryer( self::$aRegisteredConfiguration['DatabaseType'], self::$aRegisteredConfiguration );
+		$this->oOrmRegister = $oOrmRegister;
 		$this->oCache       = ReaderCache::getInstance( $this->oOrmRegister );
 	}
 
+	// Will need to do something with this...
+	static function registerConfiguration( $aConfiguration ) {
+		static $aRegisteredConfiguration;
+		self::$aRegisteredConfiguration = $aConfiguration;
+	}
+	
 	/**
 	 * @return DatabaseReader
 	 */
-	static function getInstance() {
+	static function getInstance( OrmRegister $oOrmRegister ) {
 		if ( !isset( self::$oInstance ) ) {
-			self::$oInstance = new DatabaseReader();
+			self::$oInstance = new DatabaseReader( $oOrmRegister );
 			self::$oInstance->prepareCache();
 		}
 		return self::$oInstance;
 	}	
 
 	function prepareCache() {
-		// Pre-load the cache with the teams
-		$aTeams    = ApplicationState::getObjectRegister()->getData( Filter::none(), 'Team' );
 	}
 	
 	function getNumberOfQueriesRan() {
@@ -82,7 +86,6 @@ class DatabaseReader {
 		}
 
 		$oMapping       = $this->oOrmRegister->getOrmConfiguration( $sObjectType );
-				
 		$sIdField       = $oMapping->getIdField();
 		$oFilter		= Filter::attribute( $sIdField )->isEqualTo( $sId  );
 

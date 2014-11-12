@@ -17,26 +17,42 @@ class LoggingConnector {
 	
 	function runQuery( $sQuery, $aBindVariables ) {
 
+		$aBindVariableList       = implode( $aBindVariables, ', ');
 		$aFormattedBindVariables = $this->formatBindVariables( $aBindVariables );
-		$aBindVariableList = implode( $aBindVariables, ', ');
+		$aBindVariableReferences = $aFormattedBindVariables[0];
+		$aBindVariableDatatypes  = $aFormattedBindVariables[1];
 		
 		echo( "\r\n");
 		echo( "Running Query: \r\n");
-		echo( "  Query        : $sQuery: \r\n");
-		echo( "  BindVariables: $aBindVariableList \r\n");
-
+		echo( "  Query                   : $sQuery: \r\n");
+		echo( "  BindVariables           : $aBindVariableList \r\n");
+		echo( "  BindVariablesReferences : $aBindVariableReferences \r\n");
+		echo( "  BindVariablesDatatypes  : $aBindVariableDatatypes \r\n");
+		
 		$this->iQueriesRan++;
+
+		// This should be set up in some kind of mock object
+		if ( $aBindVariables[0]==9999) {
+			return array( array( 'id' => '9999', 'some_data' => 'data', 'some_other_data' => 'other_data', (string)"1" => '1' ) );
+		}
 		
 		return array();
 	}
 	
 	function executeStatement( $sStatement, $aBindVariables, $sAction ) {
 		
+		$aBindVariableList = implode( $aBindVariables, ', ');
+		$aFormattedBindVariables = $this->formatBindVariables( $aBindVariables );
+		$aBindVariableReferences = $aFormattedBindVariables[0];
+		$aBindVariableDatatypes  = $aFormattedBindVariables[1];
+		
 		echo( "\r\n");
 		echo( "Executing Statement: \r\n");
-		echo( "  Statement    : $sStatement: \r\n");
-		echo( "  BindVariables: $sBindVars: \r\n");
-
+		echo( "  Statement               : $sStatement: \r\n");
+		echo( "  BindVariables           : $aBindVariableList: \r\n");
+		echo( "  BindVariablesReferences : $aBindVariableReferences \r\n");
+		echo( "  BindVariablesDatatypes  : $aBindVariableDatatypes \r\n");
+		
 	}
 
 	function formatBindVariables( $aBindVariableList ) {
@@ -48,6 +64,7 @@ class LoggingConnector {
 				
 			foreach( $aBindVariableList as $sBindVariableDataKey => $sBindVariableDataElement ) {
 				$aBindVariableCallStringElements[] = '$aBindVariableList["'.$sBindVariableDataKey.'"]';
+				// Currently only supports strings...
 				$aBindVariableTypes[] = 's';
 			}
 			$sBindVariableCallString = implode( $aBindVariableCallStringElements, ", " );

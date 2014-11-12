@@ -78,8 +78,6 @@ class SimpleClassToBeStoredOrmConfiguration extends OrmConfiguration {
 
 
 
-// This is how I'd LIKE to use it, not how it can be used now...
-
 $aConfiguration = array( 'DatabaseType' => DatabaseConfiguration::MY_SQL
 						, 'Username'     => 'Username'
 						, 'Password'     => 'Password'
@@ -92,11 +90,31 @@ $oDatabaseConfiguration = DatabaseReader::registerConfiguration( $aConfiguration
 $oOrmRegister = new OrmRegister();
 $oOrmRegister->registerOrmConfigration( SimpleClassToBeStored::OBJECT_TYPE, new SimpleClassToBeStoredOrmConfiguration() );
 
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will connect to the database\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+
 $oDatabaseReader = DatabaseReader::getInstance( $oOrmRegister );
+
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will create a simple select by ID\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
 
 $oGotById = $oDatabaseReader->getById( 123, SimpleClassToBeStored::OBJECT_TYPE );
 
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will create a simple select\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+
 $oGotByFiltering = $oDatabaseReader->getData( Filter::attribute('some_data')->isEqualTo('value'), SimpleClassToBeStored::OBJECT_TYPE );
+
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will create a multiple where claused select\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
 
 $oGotByComplexFiltering = $oDatabaseReader->getData(
 													Filter::attribute('some_data')->isEqualTo('value')
@@ -106,8 +124,30 @@ $oGotByComplexFiltering = $oDatabaseReader->getData(
 
 // Writing data back
 
-$oGotById->setSomeData('changed');
-$oDatabaseReader->writeData( $oGotById );
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will check for existence, then insert\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+													
+$oObject = new SimpleClassToBeStored( 999, "data", "other data" );  // will create an insert
+$oDatabaseReader->writeData( $oObject );
 
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will check for existence, then update\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
 
+$oObject = new SimpleClassToBeStored( 9999, "updated data", "updated other data" );  // will create an insert (because of the mocking of 9999)
+$oDatabaseReader->writeData( $oObject );
+
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will check for existence, then delete and re-insert\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+
+$oDeleteOnUpdates = new SimpleClassToBeStoredOrmConfiguration();
+$oDeleteOnUpdates->setDeleteOnUpdates();
+
+$oOrmRegister->registerOrmConfigration( SimpleClassToBeStored::OBJECT_TYPE, $oDeleteOnUpdates );
+$oDatabaseReader->writeData( $oObject );
 

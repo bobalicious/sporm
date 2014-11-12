@@ -52,7 +52,14 @@ class MySqlQueryer {
 	}
 	
 	private function getValueFromResultSet( $rResult, $iResultsIndex, $sColumnName ) {
-		return $rResult[$iResultsIndex][$sColumnName];
+		
+		// This is a nonsense to deal with shitty assignment of array keys in PHP
+		if ( isset( $rResult[$iResultsIndex][$sColumnName] ) ) {
+			return $rResult[$iResultsIndex][$sColumnName];
+		} elseif ( isset( $rResult[$iResultsIndex][(int)$sColumnName] ) ) {
+			return $rResult[$iResultsIndex][(int)$sColumnName];
+		}
+		return false;
 	}
 	
 		

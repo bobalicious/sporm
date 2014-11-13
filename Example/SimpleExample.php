@@ -36,41 +36,70 @@ class SimpleClassToBeStored extends LoadableObject {
 
 // The configuration for the class that you are going to store
 
-
-class SimpleClassToBeStoredOrmConfiguration extends OrmConfiguration {
+// Badly named class
+class OrmConfigurationGenerator extends OrmConfiguration {
 	
-	function __construct( $sBaseTable = 'simple_class_to_be_stored' ) {
-		
-		parent::__construct( $sBaseTable
-							, array( 'id'
-								   , 'some_data'
-								   , 'some_other_data'
-								   ) );
+	private $sClass;
+	private $aMappingConfiguration;
+	
+	function __construct( $sClass, $sBaseTable, $aMappingConfiguration ) {
+		parent::__construct( $sBaseTable, array_keys( $aMappingConfiguration ) );
+		$this->sClass = $sClass;
+		$this->aMappingConfiguration = $aMappingConfiguration;
 	}
-	
+
 	function buildRawData( $oObject ) {
-		return array( 'id'                 => $oObject->getId()
-					, 'some_data'          => $oObject->getSomeData()
-					, 'some_other_data'    => $oObject->getSomeOtherData()
-					);
+		$aRawData = array();
+		foreach ( $this->aMappingConfiguration as $sColumn => $sMethod ) {
+			// Needs some crazy error handling
+			$aRawData[ $sColumn ] = $oObject->$sMethod();
+		}
+		return $aRawData;
 	}
 	
 	function buildReturnObject( $aData ) {
 		
-		$oObject  = new SimpleClassToBeStored( $aData['id']
-											 , $aData['some_data']
-						  		        	 , $aData['some_other_data']
-			  		        				 );
-						  		
+		$fMapFunction = function( &$sValue , $sKey ) { $sValue =  '$aData["'.$sKey.'"]'; };
+
+		$aParameters = $this->aMappingConfiguration;
+		array_walk( $aParameters, $fMapFunction );
+		$sParameters = implode( $aParameters, ',' );
+
+		$sCreateStatement = '$oObject = new ' . $this->sClass . " ( $sParameters );";
+
+		eval( $sCreateStatement );
+		
 		return $oObject;
 	}
 	
-	function buildInvalidObject(  $sId = false  ) {
+	
+	function buildInvalidObject( $sId = false ) {
 		
-		return new SimpleClassToBeStored( false
-										, null
-						  		   		, null );
+		$sParameters = 'false' . str_repeat( ',null', count( $this->aMappingConfiguration )-1 );
+
+		$sCreateStatement = '$oObject = new ' . $this->sClass . " ( $sParameters );";
+
+		eval( $sCreateStatement );
+		
+		return $oObject;
 	}
+	
+}
+
+
+
+class SimpleClassToBeStoredOrmConfiguration extends OrmConfigurationGenerator {
+	
+	function __construct( $sBaseTable = 'simple_class_to_be_stored' ) {
+		
+		parent::__construct( 'SimpleClassToBeStored'
+		                    , $sBaseTable
+							, array( 'id'              => 'getId'
+								   , 'some_data'       => 'getSomeData'
+								   , 'some_other_data' => 'getSomeOtherData'
+								   ) );
+	}
+
 }
 
 

@@ -47,7 +47,7 @@ class MySqlCommandGenerator {
 
 	private function getStringForOrderBy( OrmConfiguration $oMapping, OrderBy $oOrderBy, $sString = '' ) {
 		
-		$sDatabaseField = $oMapping->getColumnNameForAttribute( $oOrderBy->getField() );
+		$sDatabaseField = $oOrderBy->getField();
 		$sDirection     = $oOrderBy->isAscending()?'ASC':'DESC';
 		
 		if ( $sString ) {
@@ -67,7 +67,7 @@ class MySqlCommandGenerator {
 	
 	private function getConditionFromFilter( OrmConfiguration $oMapping, Filter $oFilter ) {
 		
-		$sDatabaseField = $oMapping->getColumnNameForAttribute( $oFilter->getField() );
+		$sDatabaseField = $oFilter->getField();
 		$sComparitor    = $oFilter->getComparitor();
 		$sValue         = $oFilter->getValue();
 		

@@ -19,8 +19,8 @@ class LoggingConnector {
 
 		$aBindVariableList       = implode( $aBindVariables, ', ');
 		$aFormattedBindVariables = $this->formatBindVariables( $aBindVariables );
-		$aBindVariableReferences = $aFormattedBindVariables[0];
-		$aBindVariableDatatypes  = $aFormattedBindVariables[1];
+		$aBindVariableDatatypes  = $aFormattedBindVariables[0];
+		$aBindVariableReferences = $aFormattedBindVariables[1];
 		
 		echo( "\r\n");
 		echo( "Running Query: \r\n");
@@ -33,7 +33,7 @@ class LoggingConnector {
 
 		// This should be set up in some kind of mock object
 		if ( $aBindVariables[0]==9999) {
-			return array( array( 'id' => '9999', 'some_data' => 'data', 'some_other_data' => 'other_data', (string)"1" => '1' ) );
+			return array( array( 'id' => '9999', 'some_data' => 'data', 'some_other_data' => 'other_data' ) );
 		}
 		
 		return array();
@@ -43,13 +43,13 @@ class LoggingConnector {
 		
 		$aBindVariableList = implode( $aBindVariables, ', ');
 		$aFormattedBindVariables = $this->formatBindVariables( $aBindVariables );
-		$aBindVariableReferences = $aFormattedBindVariables[0];
-		$aBindVariableDatatypes  = $aFormattedBindVariables[1];
+		$aBindVariableDatatypes  = $aFormattedBindVariables[0];
+		$aBindVariableReferences = $aFormattedBindVariables[1];
 		
 		echo( "\r\n");
 		echo( "Executing Statement: \r\n");
 		echo( "  Statement               : $sStatement: \r\n");
-		echo( "  BindVariables           : $aBindVariableList: \r\n");
+		echo( "  BindVariables           : $aBindVariableList \r\n");
 		echo( "  BindVariablesReferences : $aBindVariableReferences \r\n");
 		echo( "  BindVariablesDatatypes  : $aBindVariableDatatypes \r\n");
 		

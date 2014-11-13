@@ -41,12 +41,10 @@ class SimpleClassToBeStoredOrmConfiguration extends OrmConfiguration {
 	
 	function __construct( $sBaseTable = 'simple_class_to_be_stored' ) {
 		
-		// Not quite sure why I had this mapping?  Maybe useful for datatypes
-		// Move out into configuration though...?
 		parent::__construct( $sBaseTable
-							, array( 'id'                 => 'id'
-								   , 'some_data'          => 'some_data'
-								   , 'some_other_data'    => 'some_other_data'
+							, array( 'id'
+								   , 'some_data'
+								   , 'some_other_data'
 								   ) );
 	}
 	
@@ -61,7 +59,7 @@ class SimpleClassToBeStoredOrmConfiguration extends OrmConfiguration {
 		
 		$oObject  = new SimpleClassToBeStored( $aData['id']
 											 , $aData['some_data']
-						  		        	 , $aData['some_data']
+						  		        	 , $aData['some_other_data']
 			  		        				 );
 						  		
 		return $oObject;
@@ -122,6 +120,14 @@ $oGotByComplexFiltering = $oDatabaseReader->getData(
 														->andAttribute('some_other_data')->isNotEqualTo('badValue')
 													, SimpleClassToBeStored::OBJECT_TYPE );
 
+echo( "\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+echo( "Will select all the data from a table\r\n" );
+echo( "-----------------------------------------------------------------------------------------\r\n" );
+
+$oGotByFiltering = $oDatabaseReader->getData( Filter::none(), SimpleClassToBeStored::OBJECT_TYPE );
+
+													
 // Writing data back
 
 echo( "\r\n" );

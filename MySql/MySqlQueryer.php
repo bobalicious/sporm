@@ -39,7 +39,6 @@ class MySqlQueryer {
 	private function runQuery( OrmConfiguration $oMapping, Filter $oFilter, $oOrderBy = false, $oLimit = false ) {
 		$sQuery         = $this->oCommandGenerator->getQuery( $oMapping, $oFilter, $oOrderBy, $oLimit );
 		
-		$aColumnList    = $oMapping->getColumns();
 		$aBindVariables = $oFilter->getFullVariableListWithoutNulls();
 
 		$sBindVars = implode( ',', $aBindVariables );
@@ -76,8 +75,8 @@ class MySqlQueryer {
 			while ( $iResultsIndex < $iNumberOfRows ) {
 			
 				$aRow = array();
-				foreach ( $oMapping->getColumnAttributeMappings() as $sAttributeName => $sColumnName ) {
-					$aRow[ $sAttributeName ] = $this->getValueFromResultSet( $rResult, $iResultsIndex, $sColumnName );		
+				foreach ( $oMapping->getColumns() as $sColumnName ) {
+					$aRow[ $sColumnName ] = $this->getValueFromResultSet( $rResult, $iResultsIndex, $sColumnName );		
 				}
 				
 				$iResultsIndex++;

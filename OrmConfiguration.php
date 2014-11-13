@@ -53,7 +53,6 @@ abstract class OrmConfiguration {
 	
 	function __construct( $sBaseTable, $aColumns ) {
 		$this->aColumns        = $aColumns;
-		$this->aColumns["1"]   = '"1"';
 		$this->sBaseTable      = $sBaseTable;
 	}
 
@@ -96,14 +95,6 @@ abstract class OrmConfiguration {
 	
 	function getColumns() {
 		return $this->aColumns;
-	}
-	
-	function getColumnAttributeMappings() {
-		return $this->aColumns;
-	}
-
-	function getColumnNameForAttribute( $sAttribute ) {
-			return $this->aColumns[ $sAttribute ];
 	}
 	
 	function getBaseTable() {

@@ -14,81 +14,91 @@ Will create a simple select by ID
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE id = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE id = ? : 
   BindVariables           : 123 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 -----------------------------------------------------------------------------------------
 Will create a simple select
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE some_data = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE some_data = ? : 
   BindVariables           : value 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 -----------------------------------------------------------------------------------------
 Will create a multiple where claused select
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE some_other_data != ? AND some_other_data IS NOT NULL AND some_data = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE some_other_data != ? AND some_other_data IS NOT NULL AND some_data = ? : 
   BindVariables           : badValue, value 
-  BindVariablesReferences : ss 
-  BindVariablesDatatypes  : $aBindVariableList["0"], $aBindVariableList["1"] 
+  BindVariablesReferences : $aBindVariableList["0"], $aBindVariableList["1"] 
+  BindVariablesDatatypes  : ss 
+
+-----------------------------------------------------------------------------------------
+Will select all the data from a table
+-----------------------------------------------------------------------------------------
+
+Running Query: 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE 1 = ? : 
+  BindVariables           : 1 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 -----------------------------------------------------------------------------------------
 Will check for existence, then insert
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE id = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE id = ? : 
   BindVariables           : 999 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 Executing Statement: 
   Statement               : INSERT INTO simple_class_to_be_stored ( id, some_data, some_other_data ) VALUES ( ?, ?, ? );: 
-  BindVariables           : 999, data, other data: 
-  BindVariablesReferences : sss 
-  BindVariablesDatatypes  : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"] 
+  BindVariables           : 999, data, other data 
+  BindVariablesReferences : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"] 
+  BindVariablesDatatypes  : sss 
 
 -----------------------------------------------------------------------------------------
 Will check for existence, then update
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE id = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE id = ? : 
   BindVariables           : 9999 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 Executing Statement: 
   Statement               : UPDATE simple_class_to_be_stored SET id = ?, some_data = ?, some_other_data = ? WHERE id = ?;: 
-  BindVariables           : 9999, updated data, updated other data, 9999: 
-  BindVariablesReferences : ssss 
-  BindVariablesDatatypes  : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"], $aBindVariableList["0"] 
+  BindVariables           : 9999, updated data, updated other data, 9999 
+  BindVariablesReferences : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"], $aBindVariableList["0"] 
+  BindVariablesDatatypes  : ssss 
 
 -----------------------------------------------------------------------------------------
 Will check for existence, then delete and re-insert
 -----------------------------------------------------------------------------------------
 
 Running Query: 
-  Query                   : SELECT id,some_data,some_other_data,"1" FROM simple_class_to_be_stored WHERE id = ? : 
+  Query                   : SELECT id,some_data,some_other_data FROM simple_class_to_be_stored WHERE id = ? : 
   BindVariables           : 9999 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 Executing Statement: 
   Statement               : DELETE FROM simple_class_to_be_stored WHERE id = ?;: 
-  BindVariables           : 9999: 
-  BindVariablesReferences : s 
-  BindVariablesDatatypes  : $aBindVariableList["0"] 
+  BindVariables           : 9999 
+  BindVariablesReferences : $aBindVariableList["0"] 
+  BindVariablesDatatypes  : s 
 
 Executing Statement: 
   Statement               : INSERT INTO simple_class_to_be_stored ( id, some_data, some_other_data ) VALUES ( ?, ?, ? );: 
-  BindVariables           : 9999, updated data, updated other data: 
-  BindVariablesReferences : sss 
-  BindVariablesDatatypes  : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"] 
+  BindVariables           : 9999, updated data, updated other data 
+  BindVariablesReferences : $aBindVariableList["id"], $aBindVariableList["some_data"], $aBindVariableList["some_other_data"] 
+  BindVariablesDatatypes  : sss 

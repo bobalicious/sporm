@@ -1,4 +1,5 @@
 <?php
+namespace sporm;
 
 class DatabaseReader {
 	

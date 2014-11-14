@@ -1,9 +1,11 @@
 <?php
+namespace sporm\mysql;
+
 class MySqlCommandGenerator {
 	
 	// TODO: build insert and update statements here...
 	
-	function getQuery( OrmConfiguration $oMapping, Filter $oFilter, $oOrderBy = false, $oLimit = false ) {
+	function getQuery( \sporm\OrmConfiguration $oMapping, \sporm\Filter $oFilter, $oOrderBy = false, $oLimit = false ) {
 		$sBaseQuery   = $this->getBaseQuery( $oMapping );
 		$sWhereClause = $this->getWhereClause( $oMapping, $oFilter );
 		$sOrderBy     = $this->getOrderBy( $oMapping, $oOrderBy );
@@ -11,7 +13,7 @@ class MySqlCommandGenerator {
 		return $sBaseQuery . $sWhereClause . $sOrderBy . $sLimit;
 	}
 	
-	private function getBaseQuery( OrmConfiguration $oMapping ) {
+	private function getBaseQuery( \sporm\OrmConfiguration $oMapping ) {
 		
 		$aColumns   = $oMapping->getColumns();
 		$sBaseTable = $oMapping->getBaseTable();
@@ -20,7 +22,7 @@ class MySqlCommandGenerator {
 		return $sQuery;
 	}
 	
-	private function getWhereClause( OrmConfiguration $oMapping, $oFilter = false  ) {
+	private function getWhereClause( \sporm\OrmConfiguration $oMapping, $oFilter = false  ) {
 		
 		if ( $oFilter ) {
 			$sCondition = $this->getConditionFromFilter( $oMapping, $oFilter );
@@ -29,7 +31,7 @@ class MySqlCommandGenerator {
 		return '';
 	}
 	
-	private function getOrderBy( OrmConfiguration $oMapping, $oOrderBy = false  ) {
+	private function getOrderBy( \sporm\OrmConfiguration $oMapping, $oOrderBy = false  ) {
 		
 		if ( $oOrderBy ) {
 			return $this->getStringForOrderBy( $oMapping, $oOrderBy );
@@ -37,7 +39,7 @@ class MySqlCommandGenerator {
 		return '';
 	}
 	
-	private function getLimit( OrmConfiguration $oMapping, $oLimit = false  ) {
+	private function getLimit( \sporm\OrmConfiguration $oMapping, $oLimit = false  ) {
 		
 		if ( $oLimit ) {
 			return ' LIMIT '. $oLimit->getNumberOfRecords();
@@ -45,7 +47,7 @@ class MySqlCommandGenerator {
 		return '';
 	}
 
-	private function getStringForOrderBy( OrmConfiguration $oMapping, OrderBy $oOrderBy, $sString = '' ) {
+	private function getStringForOrderBy( \sporm\OrmConfiguration $oMapping, \sporm\OrderBy $oOrderBy, $sString = '' ) {
 		
 		$sDatabaseField = $oOrderBy->getField();
 		$sDirection     = $oOrderBy->isAscending()?'ASC':'DESC';
@@ -65,7 +67,7 @@ class MySqlCommandGenerator {
 		return $sString;
 	}
 	
-	private function getConditionFromFilter( OrmConfiguration $oMapping, Filter $oFilter ) {
+	private function getConditionFromFilter( \sporm\OrmConfiguration $oMapping, \sporm\Filter $oFilter ) {
 		
 		$sDatabaseField = $oFilter->getField();
 		$sComparitor    = $oFilter->getComparitor();

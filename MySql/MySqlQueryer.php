@@ -1,4 +1,6 @@
 <?php
+namespace sporm\mysql;
+
 class MySqlQueryer {
 	
 	private $sUsername;
@@ -36,7 +38,7 @@ class MySqlQueryer {
 		return $this->iQueriesRan;
 	}
 	
-	private function runQuery( OrmConfiguration $oMapping, Filter $oFilter, $oOrderBy = false, $oLimit = false ) {
+	private function runQuery( \sporm\OrmConfiguration $oMapping, \sporm\Filter $oFilter, $oOrderBy = false, $oLimit = false ) {
 		$sQuery         = $this->oCommandGenerator->getQuery( $oMapping, $oFilter, $oOrderBy, $oLimit );
 		
 		$aBindVariables = $oFilter->getFullVariableListWithoutNulls();
@@ -62,7 +64,7 @@ class MySqlQueryer {
 	}
 	
 		
-	function getData( OrmConfiguration $oMapping, Filter $oFilter, $oOrderBy = false, $oLimit = false  ) {
+	function getData( \sporm\OrmConfiguration $oMapping, \sporm\Filter $oFilter, $oOrderBy = false, $oLimit = false  ) {
 		
 		$aData = array();
 
@@ -87,7 +89,7 @@ class MySqlQueryer {
 		return $aData;
 	}
 	
-	function insertData( OrmConfiguration $oMapping, LoadableObject $oObject ) {
+	function insertData( \sporm\OrmConfiguration $oMapping, \sporm\LoadableObject $oObject ) {
 		
 		// TODO: move statement generation into the other object
 		
@@ -107,7 +109,7 @@ class MySqlQueryer {
 		
 	}	
 	
-	function deleteData( OrmConfiguration $oMapping, LoadableObject $oObject ) {
+	function deleteData( \sporm\OrmConfiguration $oMapping, \sporm\LoadableObject $oObject ) {
 		
 		$sBaseTable = $oMapping->getBaseTable();
 		
@@ -120,7 +122,7 @@ class MySqlQueryer {
 		
 	}	
 	
-	function updateData( OrmConfiguration $oMapping, LoadableObject $oObject ) {
+	function updateData( \sporm\OrmConfiguration $oMapping, \sporm\LoadableObject $oObject ) {
 		
 		$sBaseTable = $oMapping->getBaseTable();
 		$aRawData   = $oMapping->buildRawData( $oObject );

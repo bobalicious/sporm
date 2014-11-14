@@ -1,4 +1,6 @@
 <?php
+namespace sporm;
+
 class Filter {
 	
 	private $sField;

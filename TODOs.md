@@ -4,9 +4,9 @@ SPORM - Simple PHP Object Relational Mapper
 ##Things that I'm planning on doing:
 
 ###Housekeeping
-* Implement an autoloader - just get a standard one
 * Split the classes up into their own files properly
-* Add a namespace (Sporm)
+* Get rid of all closing ?>
+* Tidy up the namespaces a little
 * Change the name of:
 ** DatabaseReader
 ** OrmConfigurationGenerator

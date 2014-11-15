@@ -158,4 +158,3 @@ class DatabaseReader {
 		return true;
 	}
 }
-?>

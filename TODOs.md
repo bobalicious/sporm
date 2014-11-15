@@ -4,8 +4,6 @@ SPORM - Simple PHP Object Relational Mapper
 ##Things that I'm planning on doing:
 
 ###Housekeeping
-* Split the classes up into their own files properly
-* Get rid of all closing ?>
 * Tidy up the namespaces a little
 * Change the name of:
   * DatabaseReader
@@ -55,3 +53,4 @@ SPORM - Simple PHP Object Relational Mapper
 ###You're dreaming
 * Add the generation of the database scripts
 * Add a migration mechanism
+* Unit tests!

@@ -22,5 +22,3 @@ class OrmRegister {
 		// TODO: Else return an invalid Orm		
 	}
 }
-
-?>
